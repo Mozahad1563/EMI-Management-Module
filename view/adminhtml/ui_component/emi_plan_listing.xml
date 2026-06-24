@@ -30,6 +30,12 @@
             <updateUrl path="mui/index/render"/>
         </settings>
         <aclResource>BrainStation23_EmiManagement::plan</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="emi_plan_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>id</primaryFieldName>
+            </settings>
+        </dataProvider>
     </dataSource>
 
     <listingToolbar name="listing_top">
