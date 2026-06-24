@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Brain Station 23
+ *
+ * @category   BrainStation23
+ * @package    EmiManagement
+ * @author     Brain Station 23
+ * @copyright  Copyright (c) 2026 Brain Station 23
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="BrainStation23_EmiManagement">
+        <sequence>
+            <module name="Magento_Catalog"/>
+            <module name="BrainStation23_MobileAuthoring"/>
+        </sequence>
+    </module>
+</config>

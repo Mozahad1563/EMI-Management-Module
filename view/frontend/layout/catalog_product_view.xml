@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Brain Station 23
+ *
+ * @category   BrainStation23
+ * @package    EmiManagement
+ * @author     Brain Station 23
+ * @copyright  Copyright (c) 2026 Brain Station 23
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="product.info.main">
+            <block class="BrainStation23\EmiManagement\Block\EmiManagement"
+                   name="product.emi.calculator"
+                   template="BrainStation23_EmiManagement::calculator.phtml"
+                   after="product.info.price" />
+        </referenceContainer>
+    </body>
+</page>
