@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">emi_plan_listing.emi_plan_listing_data_source</item>
+        </item>
+    </argument>
+
+    <settings>
+        <buttons>
+            <button name="add">
+                <url path="*/*/new"/>
+                <class>primary</class>
+                <label translate="true">Add New EMI Plan</label>
+            </button>
+        </buttons>
+        <spinner>emi_plan_columns</spinner>
+        <deps>
+            <dep>emi_plan_listing.emi_plan_listing_data_source</dep>
+        </deps>
+    </settings>
+
+    <dataSource name="emi_plan_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>BrainStation23_EmiManagement::plan</aclResource>
+    </dataSource>
+
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>true</sticky>
+        </settings>
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filters name="listing_filters"/>
+        <massaction name="listing_massaction">
+            <action name="delete">
+                <settings>
+                    <url path="emi_management/plan/massDelete"/>
+                    <type>delete</type>
+                    <label translate="true">Delete</label>
+                    <confirm>
+                        <title translate="true">Delete EMI Plans</title>
+                        <message translate="true">Are you sure you want to delete the selected plans?</message>
+                    </confirm>
+                </settings>
+            </action>
+        </massaction>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+
+    <columns name="emi_plan_columns">
+        <selectionsColumn name="ids" sortOrder="0">
+            <settings>
+                <indexField>id</indexField>
+            </settings>
+        </selectionsColumn>
+
+        <column name="id" sortOrder="10">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">ID</label>
+                <sorting>asc</sorting>
+            </settings>
+        </column>
+
+        <column name="bank_id" component="Magento_Ui/js/grid/columns/select" sortOrder="20">
+            <settings>
+                <options class="BrainStation23\EmiManagement\Model\Source\BankOptions"/>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <label translate="true">Bank</label>
+            </settings>
+        </column>
+
+        <column name="months" sortOrder="30">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">Tenure (Months)</label>
+            </settings>
+        </column>
+
+        <column name="fee_percentage" sortOrder="40">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">Convenience Fee (%)</label>
+            </settings>
+        </column>
+
+        <column name="status" component="Magento_Ui/js/grid/columns/select" sortOrder="50">
+            <settings>
+                <options class="BrainStation23\EmiManagement\Model\Source\Status"/>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+
+        <actionsColumn name="actions" class="Magento\Ui\Component\Listing\Columns\Actions" sortOrder="100">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="editUrlPath" xsi:type="string">emi_management/plan/edit</item>
+                    <item name="deleteUrlPath" xsi:type="string">emi_management/plan/delete</item>
+                    <item name="indexField" xsi:type="string">id</item>
+                </item>
+            </argument>
+            <settings>
+                <label translate="true">Actions</label>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

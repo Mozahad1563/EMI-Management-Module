@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Brain Station 23
+ *
+ * @category   BrainStation23
+ * @package    EmiManagement
+ * @author     Brain Station 23
+ * @copyright  Copyright (c) 2026 Brain Station 23
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="BrainStation23_EmiManagement::emi_management"
+             title="EMI Management"
+             module="BrainStation23_EmiManagement"
+             sortOrder="55"
+             resource="BrainStation23_EmiManagement::emi_management"/>
+        <add id="BrainStation23_EmiManagement::bank"
+             title="Banks"
+             module="BrainStation23_EmiManagement"
+             sortOrder="10"
+             parent="BrainStation23_EmiManagement::emi_management"
+             action="emi_management/bank"
+             resource="BrainStation23_EmiManagement::bank"/>
+        <add id="BrainStation23_EmiManagement::plan"
+             title="EMI Plans"
+             module="BrainStation23_EmiManagement"
+             sortOrder="20"
+             parent="BrainStation23_EmiManagement::emi_management"
+             action="emi_management/plan"
+             resource="BrainStation23_EmiManagement::plan"/>
+    </menu>
+</config>

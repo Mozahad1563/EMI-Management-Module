@@ -1,0 +1,43 @@
+{
+    "emi_bank": {
+        "column": {
+            "id": true,
+            "name": true,
+            "logo": true,
+            "status": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "emi_plan": {
+        "column": {
+            "id": true,
+            "bank_id": true,
+            "months": true,
+            "fee_percentage": true,
+            "status": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "EMI_PLAN_BANK_ID_EMI_BANK_ID": true
+        }
+    },
+    "product_emi": {
+        "column": {
+            "id": true,
+            "product_id": true,
+            "bank_id": true,
+            "status": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "PRODUCT_EMI_BANK_ID_EMI_BANK_ID": true
+        },
+        "index": {
+            "PRODUCT_EMI_PRODUCT_ID": true
+        }
+    }
+}

@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Brain Station 23
+ *
+ * @category   BrainStation23
+ * @package    EmiManagement
+ * @author     Brain Station 23
+ * @copyright  Copyright (c) 2026 Brain Station 23
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <table name="emi_bank" resource="default" engine="innodb" comment="EMI Bank Partners">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"
+                comment="Bank ID"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="255"
+                comment="Bank Name"/>
+        <column xsi:type="varchar" name="logo" nullable="true" length="255"
+                comment="Bank Logo Path"/>
+        <column xsi:type="smallint" name="status" unsigned="false" nullable="false" default="1"
+                comment="Status (1=Active, 0=Inactive)"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" default="CURRENT_TIMESTAMP"
+                on_update="true" comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+
+    <table name="emi_plan" resource="default" engine="innodb" comment="EMI Tenure Plans">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"
+                comment="Plan ID"/>
+        <column xsi:type="int" name="bank_id" unsigned="true" nullable="false"
+                comment="Bank ID"/>
+        <column xsi:type="int" name="months" unsigned="true" nullable="false"
+                comment="Tenure in Months"/>
+        <column xsi:type="decimal" name="fee_percentage" precision="5" scale="2" unsigned="false"
+                nullable="false" default="0" comment="Convenience Fee Percentage"/>
+        <column xsi:type="smallint" name="status" unsigned="false" nullable="false" default="1"
+                comment="Status (1=Active, 0=Inactive)"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="EMI_PLAN_BANK_ID_EMI_BANK_ID"
+                    table="emi_plan" column="bank_id"
+                    referenceTable="emi_bank" referenceColumn="id"
+                    onDelete="CASCADE"/>
+    </table>
+
+    <table name="product_emi" resource="default" engine="innodb" comment="Product EMI Bank Eligibility">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"
+                comment="Record ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false"
+                comment="Catalog Product ID"/>
+        <column xsi:type="int" name="bank_id" unsigned="true" nullable="false"
+                comment="Bank ID"/>
+        <column xsi:type="smallint" name="status" unsigned="false" nullable="false" default="1"
+                comment="Status (1=Active, 0=Inactive)"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="PRODUCT_EMI_BANK_ID_EMI_BANK_ID"
+                    table="product_emi" column="bank_id"
+                    referenceTable="emi_bank" referenceColumn="id"
+                    onDelete="CASCADE"/>
+        <index referenceId="PRODUCT_EMI_PRODUCT_ID" indexType="btree">
+            <column name="product_id"/>
+        </index>
+    </table>
+</schema>

@@ -14,436 +14,137 @@ if (!$block->isEmiEligible()) {
     return;
 }
 
-$productPrice = $block->getProductPrice();
-$productName = $block->getProduct() ? $block->getProduct()->getName() : __('Product');
-$bankDataJson = $block->getBankDataJson();
+$productName = $block->getProduct() ? $block->getProduct()->getName() : (string) __('Product');
 ?>
 
-<!-- Tailwind CSS Injection (Scoped) -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    slate: {
-                        950: '#030712'
-                    },
-                    brand: {
-                        primary: '#1e40af', /* Deep Blue */
-                        accent: '#3b82f6',
-                        accentHover: '#2563eb'
-                    }
-                }
-            }
-        },
-        corePlugins: {
-            preflight: false
-        }
-    }
-</script>
-
-<style>
-    /* Scope styles to avoid Magento collision */
-    .emi-widget-container {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-    .emi-modal-backdrop {
-        transition: opacity 250ms ease-out;
-    }
-    .emi-modal-content {
-        transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms ease-out;
-    }
-    /* Hide scrollbar utility */
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
-    .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-</style>
-
-<div class="emi-widget-container my-4 py-2 border-t border-b border-gray-200">
-    <!-- Phase 1: PDP Inline Trigger Link -->
-    <div id="emi-trigger-wrapper" class="flex items-center text-sm text-gray-700">
-        <svg class="w-5 h-5 mr-2 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+<div class="emi-widget">
+    <!-- PDP Trigger -->
+    <div class="emi-trigger">
+        <svg class="emi-trigger__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+             xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
         </svg>
-        <span id="emi-trigger-text" class="leading-relaxed">
-            <!-- Dynamically populated via JS -->
-            Checking EMI availability...
+        <span data-role="trigger-text" class="emi-trigger__text">
+            <?= $block->escapeHtml(__('Checking EMI availability...')) ?>
         </span>
-        <button id="emi-view-plans-btn" class="ml-2 font-semibold text-blue-600 hover:text-blue-800 hover:underline bg-transparent border-0 p-0 cursor-pointer hidden">
-            <?= __('View Plans') ?>
+        <button data-role="view-plans" class="emi-trigger__button" type="button" style="display: none;">
+            <?= $block->escapeHtml(__('View Plans')) ?>
         </button>
     </div>
 
-    <!-- Phase 2: The Modal User Interface -->
-    <div id="emi-modal-backdrop" class="emi-modal-backdrop fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none">
-        <div id="emi-modal-content" class="emi-modal-content w-full max-w-xl bg-slate-900 border border-slate-800 text-slate-100 rounded-t-2xl sm:rounded-2xl shadow-2xl transform translate-y-full sm:translate-y-4 opacity-0 max-h-[90vh] sm:max-h-[85vh] flex flex-col overflow-hidden">
-            
-            <!-- Modal Header -->
-            <div class="flex items-start justify-between p-5 border-b border-slate-800 flex-shrink-0">
+    <!-- Modal -->
+    <div data-role="modal" class="emi-modal" style="display: none;">
+        <div data-role="modal-backdrop" class="emi-modal__backdrop"></div>
+        <div class="emi-modal__dialog">
+
+            <!-- Header -->
+            <div class="emi-modal__header">
                 <div>
-                    <h3 class="text-lg font-bold text-white leading-tight">
-                        <?= __('EMI & Installment Calculator') ?>
+                    <h3 class="emi-modal__title">
+                        <?= $block->escapeHtml(__('EMI & Installment Calculator')) ?>
                     </h3>
-                    <p class="text-xs text-slate-400 mt-1 truncate max-w-[280px] sm:max-w-md">
-                        <?= __('Calculating installment options for:') ?> <span class="font-medium text-slate-300"><?= $block->escapeHtml($productName) ?></span>
+                    <p class="emi-modal__subtitle">
+                        <?= $block->escapeHtml(__('Calculating installment options for:')) ?>
+                        <span data-role="product-name" class="emi-modal__product-name">
+                            <?= $block->escapeHtml($productName) ?>
+                        </span>
                     </p>
                 </div>
-                <button id="emi-close-modal-btn" class="text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer border-0 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                <button data-role="close-modal" class="emi-modal__close" type="button"
+                        aria-label="<?= $block->escapeHtmlAttr(__('Close')) ?>">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
 
-            <!-- Modal Scrollable Content -->
-            <div class="p-5 space-y-6 overflow-y-auto flex-grow no-scrollbar">
-                
-                <!-- Product Cost Overlay -->
-                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800/80">
-                    <span class="text-sm text-slate-400"><?= __('Total Item Price') ?></span>
-                    <span id="emi-modal-product-price" class="text-lg font-bold text-white">
-                        <!-- Populated via JS -->
+            <!-- Body -->
+            <div class="emi-modal__body">
+                <!-- Price display -->
+                <div class="emi-price-bar">
+                    <span class="emi-price-bar__label">
+                        <?= $block->escapeHtml(__('Total Item Price')) ?>
                     </span>
+                    <span data-role="modal-price" class="emi-price-bar__value"></span>
                 </div>
 
-                <!-- Bank Selection Zone -->
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-                        <?= __('1. Select Bank Partnership') ?>
+                <!-- Bank selection -->
+                <div class="emi-section">
+                    <label class="emi-section__label">
+                        <?= $block->escapeHtml(__('1. Select Bank Partnership')) ?>
                     </label>
-                    <div id="emi-bank-list" class="grid grid-cols-2 gap-3">
-                        <!-- Rendered dynamically -->
-                    </div>
+                    <div data-role="bank-list" class="emi-bank-grid"></div>
                 </div>
 
-                <!-- Tenure Selection Zone -->
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-                        <?= __('2. Select Tenure Months') ?>
+                <!-- Tenure selection -->
+                <div class="emi-section">
+                    <label class="emi-section__label">
+                        <?= $block->escapeHtml(__('2. Select Tenure Months')) ?>
                     </label>
-                    <div id="emi-tenure-list" class="flex flex-wrap gap-2">
-                        <!-- Rendered dynamically -->
-                    </div>
+                    <div data-role="tenure-list" class="emi-tenure-list"></div>
                 </div>
 
-                <!-- Summary Pane (Breakdown) -->
-                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col space-y-4">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <!-- Summary breakdown -->
+                <div class="emi-summary">
+                    <div class="emi-summary__header">
                         <div>
-                            <span class="text-xs text-slate-400 block uppercase tracking-wider font-semibold"><?= __('Monthly Installment') ?></span>
-                            <div class="flex items-baseline mt-1">
-                                <span id="emi-summary-monthly-payment" class="text-2xl sm:text-3xl font-black text-white leading-none">
-                                    <!-- Populated via JS -->
+                            <span class="emi-summary__monthly-label">
+                                <?= $block->escapeHtml(__('Monthly Installment')) ?>
+                            </span>
+                            <div class="emi-summary__monthly-value">
+                                <span data-role="monthly-payment"
+                                      class="emi-summary__monthly-amount"></span>
+                                <span class="emi-summary__monthly-suffix">
+                                    / <?= $block->escapeHtml(__('month')) ?>
                                 </span>
-                                <span class="text-slate-400 text-sm ml-1">/ <?= __('month') ?></span>
                             </div>
                         </div>
-                        <div class="flex items-center">
-                            <span id="emi-summary-badge" class="px-2.5 py-1 rounded-full text-xs font-bold tracking-wide uppercase">
-                                <!-- Populated via JS -->
+                        <span data-role="interest-badge" class="emi-badge emi-badge--neutral"></span>
+                    </div>
+
+                    <div class="emi-breakdown">
+                        <div class="emi-breakdown__row">
+                            <span class="emi-breakdown__label">
+                                <?= $block->escapeHtml(__('Original Product Price')) ?>
                             </span>
+                            <span data-role="breakdown-price"
+                                  class="emi-breakdown__value"></span>
                         </div>
-                    </div>
-
-                    <!-- Line Items Breakdown -->
-                    <div class="border-t border-slate-800/60 pt-3 space-y-2">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-slate-400"><?= __('Original Product Price') ?></span>
-                            <span id="emi-breakdown-price" class="text-slate-200 font-medium"></span>
+                        <div class="emi-breakdown__row">
+                            <span class="emi-breakdown__label">
+                                <?= $block->escapeHtml(__('Interest Charged')) ?>
+                            </span>
+                            <span data-role="breakdown-interest"
+                                  class="emi-breakdown__value"></span>
                         </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-slate-400"><?= __('Interest Charged') ?></span>
-                            <span id="emi-breakdown-interest" class="text-slate-200 font-medium"></span>
-                        </div>
-                        <div class="flex justify-between text-sm pt-2 border-t border-slate-800/40">
-                            <span class="text-white font-semibold"><?= __('Total Amount Payable') ?></span>
-                            <span id="emi-breakdown-total" class="text-emerald-400 font-bold"></span>
+                        <div class="emi-breakdown__row emi-breakdown__row--total">
+                            <span class="emi-breakdown__label">
+                                <?= $block->escapeHtml(__('Total Amount Payable')) ?>
+                            </span>
+                            <span data-role="breakdown-total"
+                                  class="emi-breakdown__value emi-breakdown__value--total"></span>
                         </div>
                     </div>
                 </div>
 
-                <div class="text-[10px] text-center text-slate-500 leading-normal">
-                    * <?= __('EMI availability is subject to approval from the respective bank. Commas and calculations conform to standard financial rules in Bangladesh.') ?>
-                </div>
-
+                <!-- Disclaimer -->
+                <p class="emi-disclaimer">
+                    * <?= $block->escapeHtml(
+                        __('EMI availability is subject to approval from the respective bank. Calculations conform to standard financial rules in Bangladesh.')
+                    ) ?>
+                </p>
             </div>
         </div>
     </div>
 </div>
 
-<script type="text/javascript">
-    (function () {
-        const productPrice = parseFloat("<?= $productPrice ?>");
-        const bankData = <?= $bankDataJson ?>;
-        
-        // Element references
-        const triggerText = document.getElementById('emi-trigger-text');
-        const viewPlansBtn = document.getElementById('emi-view-plans-btn');
-        const modalBackdrop = document.getElementById('emi-modal-backdrop');
-        const modalContent = document.getElementById('emi-modal-content');
-        const closeModalBtn = document.getElementById('emi-close-modal-btn');
-        const bankListContainer = document.getElementById('emi-bank-list');
-        const tenureListContainer = document.getElementById('emi-tenure-list');
-        
-        const modalProductPrice = document.getElementById('emi-modal-product-price');
-        const summaryMonthlyPayment = document.getElementById('emi-summary-monthly-payment');
-        const summaryBadge = document.getElementById('emi-summary-badge');
-        
-        const breakdownPrice = document.getElementById('emi-breakdown-price');
-        const breakdownInterest = document.getElementById('emi-breakdown-interest');
-        const breakdownTotal = document.getElementById('emi-breakdown-total');
-
-        let activeBankId = null;
-        let activeTenureMonths = null;
-
-        // Formula Calculation Utility
-        function calculateEMIDetails(price, months, rate) {
-            const totalInterest = price * rate;
-            const totalPayable = price + totalInterest;
-            const monthlyInstallment = totalPayable / months;
-            return {
-                interestCharged: totalInterest,
-                totalPayable: totalPayable,
-                monthlyInstallment: monthlyInstallment
-            };
-        }
-
-        // Taka Formatter (Lakh/Crore standard)
-        function formatTaka(amount) {
-            const rounded = Math.round(amount);
-            const formatted = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(rounded);
-            return '৳' + formatted;
-        }
-
-        // Generate Initials if Logo Url is missing
-        function getBankInitials(name) {
-            return name
-                .split(' ')
-                .map(w => w[0])
-                .join('')
-                .slice(0, 3)
-                .toUpperCase();
-        }
-
-        // Evaluate overall EMI feasibility and starting rate
-        function initWidget() {
-            let lowestEMI = Infinity;
-            let isAnyBankEligible = false;
-            let minimumPossibleOrderAmount = Infinity;
-
-            bankData.forEach(bank => {
-                if (bank.min_amount < minimumPossibleOrderAmount) {
-                    minimumPossibleOrderAmount = bank.min_amount;
-                }
-                
-                // If the product meets the bank's minimum purchase threshold
-                if (productPrice >= bank.min_amount) {
-                    isAnyBankEligible = true;
-                    bank.tenures.forEach(tenure => {
-                        const { monthlyInstallment } = calculateEMIDetails(productPrice, tenure.months, tenure.interest_rate);
-                        if (monthlyInstallment < lowestEMI) {
-                            lowestEMI = monthlyInstallment;
-                        }
-                    });
-                }
-            });
-
-            if (isAnyBankEligible && lowestEMI !== Infinity) {
-                triggerText.innerHTML = `EMI options available starting from <span class="font-bold text-gray-900">${formatTaka(lowestEMI)}/month</span>.`;
-                viewPlansBtn.classList.remove('hidden');
-                
-                // Setup trigger button click listener
-                viewPlansBtn.addEventListener('click', openModal);
-            } else {
-                // If below order threshold
-                triggerText.innerHTML = `EMI available on orders over <span class="font-bold text-gray-900">${formatTaka(minimumPossibleOrderAmount)}</span>.`;
-                viewPlansBtn.classList.add('hidden');
-            }
-        }
-
-        // Modal State Controller
-        function openModal() {
-            modalBackdrop.classList.remove('pointer-events-none');
-            modalBackdrop.classList.add('opacity-100');
-            modalContent.classList.remove('translate-y-full', 'sm:translate-y-4', 'opacity-0');
-            modalContent.classList.add('translate-y-0', 'sm:translate-y-0', 'opacity-100');
-            document.body.style.overflow = 'hidden';
-
-            modalProductPrice.textContent = formatTaka(productPrice);
-
-            // Pre-select first eligible bank
-            const firstEligible = bankData.find(b => productPrice >= b.min_amount);
-            if (firstEligible) {
-                selectBank(firstEligible.bank_id);
-            } else {
-                renderBanks();
-            }
-        }
-
-        function closeModal() {
-            modalBackdrop.classList.remove('opacity-100');
-            modalBackdrop.classList.add('pointer-events-none');
-            modalContent.classList.remove('translate-y-0', 'sm:translate-y-0', 'opacity-100');
-            modalContent.classList.add('translate-y-full', 'sm:translate-y-4', 'opacity-0');
-            document.body.style.overflow = '';
-        }
-
-        // Render Bank Partnerships Scroller/Grid
-        function renderBanks() {
-            bankListContainer.innerHTML = '';
-            bankData.forEach(bank => {
-                const isDisabled = productPrice < bank.min_amount;
-                const isSelected = bank.bank_id === activeBankId;
-
-                const bankCard = document.createElement('div');
-                bankCard.className = `p-3 rounded-xl border flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 ${
-                    isDisabled 
-                        ? 'opacity-40 border-slate-800 bg-slate-900/40 pointer-events-none' 
-                        : isSelected
-                            ? 'border-blue-500 bg-blue-950/30 ring-1 ring-blue-500'
-                            : 'border-slate-800 bg-slate-800/40 hover:border-slate-700 hover:bg-slate-800'
-                }`;
-
-                // Card Layout
-                let logoMarkup = '';
-                if (bank.logo_url && bank.logo_url.trim() !== '') {
-                    logoMarkup = `<img src="${bank.logo_url}" alt="${bank.bank_name}" class="h-8 max-w-full object-contain mb-2 flex-shrink-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />`;
-                }
-                
-                const initialsMarkup = `
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-800/80 text-slate-200 font-bold border border-slate-700 mb-2 flex-shrink-0 text-sm" style="${(bank.logo_url && bank.logo_url.trim() !== '') ? 'display:none;' : ''}">
-                        ${getBankInitials(bank.bank_name)}
-                    </div>
-                `;
-
-                bankCard.innerHTML = `
-                    ${logoMarkup}
-                    ${initialsMarkup}
-                    <span class="text-xs font-semibold text-slate-200 break-words w-full">${bank.bank_name}</span>
-                    ${isDisabled ? `<span class="text-[9px] text-amber-500/80 mt-1 font-medium">Min order ${formatTaka(bank.min_amount)}</span>` : ''}
-                `;
-
-                if (!isDisabled) {
-                    bankCard.addEventListener('click', () => selectBank(bank.bank_id));
-                }
-
-                bankListContainer.appendChild(bankCard);
-            });
-        }
-
-        // Render Tenures List Options
-        function renderTenures() {
-            tenureListContainer.innerHTML = '';
-            const bank = bankData.find(b => b.bank_id === activeBankId);
-            if (!bank) return;
-
-            bank.tenures.forEach(tenure => {
-                const isSelected = tenure.months === activeTenureMonths;
-                const chip = document.createElement('button');
-                
-                chip.className = `px-4 py-2.5 rounded-lg border text-xs font-bold transition-all duration-200 cursor-pointer border-0 ${
-                    isSelected
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20'
-                        : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
-                }`;
-                chip.textContent = `${tenure.months} ${tenure.months === 1 ? 'Month' : 'Months'}`;
-                
-                chip.addEventListener('click', () => selectTenure(tenure.months));
-                tenureListContainer.appendChild(chip);
-            });
-        }
-
-        // Active State Selection Controllers
-        function selectBank(bankId) {
-            activeBankId = bankId;
-            const bank = bankData.find(b => b.bank_id === bankId);
-            
-            // Set first available tenure option as default active state
-            if (bank && bank.tenures.length > 0) {
-                activeTenureMonths = bank.tenures[0].months;
-            } else {
-                activeTenureMonths = null;
-            }
-
-            renderBanks();
-            renderTenures();
-            updateCalculations();
-        }
-
-        function selectTenure(months) {
-            activeTenureMonths = months;
-            renderTenures();
-            updateCalculations();
-        }
-
-        // Calculation State Hydration
-        function updateCalculations() {
-            const bank = bankData.find(b => b.bank_id === activeBankId);
-            if (!bank || activeTenureMonths === null) {
-                resetCalculationDetails();
-                return;
-            }
-
-            const tenure = bank.tenures.find(t => t.months === activeTenureMonths);
-            if (!tenure) {
-                resetCalculationDetails();
-                return;
-            }
-
-            const { interestCharged, totalPayable, monthlyInstallment } = calculateEMIDetails(
-                productPrice,
-                tenure.months,
-                tenure.interest_rate
-            );
-
-            // Populate Breakdown UI
-            summaryMonthlyPayment.textContent = formatTaka(monthlyInstallment);
-            breakdownPrice.textContent = formatTaka(productPrice);
-            breakdownInterest.textContent = formatTaka(interestCharged);
-            breakdownTotal.textContent = formatTaka(totalPayable);
-
-            // Interest Badge logic
-            if (tenure.interest_rate === 0) {
-                summaryBadge.textContent = '0% Interest EMI';
-                summaryBadge.className = 'px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-            } else {
-                summaryBadge.textContent = `${Math.round(tenure.interest_rate * 100)}% Regular Interest`;
-                summaryBadge.className = 'px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20';
-            }
-        }
-
-        function resetCalculationDetails() {
-            summaryMonthlyPayment.textContent = formatTaka(0);
-            breakdownPrice.textContent = formatTaka(0);
-            breakdownInterest.textContent = formatTaka(0);
-            breakdownTotal.textContent = formatTaka(0);
-            summaryBadge.textContent = 'N/A';
-            summaryBadge.className = 'px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase bg-slate-800 text-slate-400';
-        }
-
-        // Close modal when clicking outside content area (on backdrop)
-        modalBackdrop.addEventListener('click', function(e) {
-            if (e.target === modalBackdrop) {
-                closeModal();
-            }
-        });
-
-        // Close modal when clicking close button (X)
-        closeModalBtn.addEventListener('click', closeModal);
-
-        // Escape key modal closer
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        // Initialize widget execution
-        initWidget();
-    })();
+<script type="text/x-magento-init">
+{
+    ".emi-widget": {
+        "BrainStation23_EmiManagement/js/emi-calculator": <?= /* @noEscape */ $block->getWidgetConfigJson() ?>
+    }
+}
 </script>

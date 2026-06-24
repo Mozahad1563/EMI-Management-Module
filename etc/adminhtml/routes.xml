@@ -10,11 +10,10 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="BrainStation23_EmiManagement">
-        <sequence>
-            <module name="Magento_Catalog"/>
-            <module name="Magento_Store"/>
-        </sequence>
-    </module>
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="emi_management" frontName="emi_management">
+            <module name="BrainStation23_EmiManagement"/>
+        </route>
+    </router>
 </config>

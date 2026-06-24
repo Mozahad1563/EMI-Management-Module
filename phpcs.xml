@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Brain Station 23
+ *
+ * @category   BrainStation23
+ * @package    EmiManagement
+ * @author     Brain Station 23
+ * @copyright  Copyright (c) 2026 Brain Station 23
+ */
+-->
+<ruleset name="Magento2CodingStandard">
+    <description>Magento 2 Coding Standard Validation Configuration</description>
+    <rule ref="Magento2"/>
+    
+    <!-- Check all files in the current directory -->
+    <file>.</file>
+    
+    <!-- Exclude files/folders from checking -->
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/context/*</exclude-pattern>
+    <exclude-pattern>*.css</exclude-pattern>
+    <exclude-pattern>*.js</exclude-pattern>
+</ruleset>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">emi_plan_form.emi_plan_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">EMI Plan Information</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+
+    <settings>
+        <buttons>
+            <button name="back" class="Magento\Cms\Block\Adminhtml\Block\Edit\BackButton"/>
+            <button name="delete" class="Magento\Cms\Block\Adminhtml\Block\Edit\DeleteButton"/>
+            <button name="save" class="Magento\Cms\Block\Adminhtml\Block\Edit\SaveButton"/>
+            <button name="save_and_continue" class="Magento\Cms\Block\Adminhtml\Block\Edit\SaveAndContinueButton"/>
+        </buttons>
+        <namespace>emi_plan_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>emi_plan_form.emi_plan_form_data_source</dep>
+        </deps>
+    </settings>
+
+    <dataSource name="emi_plan_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="emi_management/plan/save"/>
+        </settings>
+        <dataProvider class="BrainStation23\EmiManagement\Model\Plan\DataProvider"
+                      name="emi_plan_form_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+
+    <fieldset name="general">
+        <settings>
+            <label translate="true">General</label>
+        </settings>
+
+        <field name="id" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+            </settings>
+        </field>
+
+        <field name="bank_id" formElement="select" sortOrder="10">
+            <settings>
+                <dataType>int</dataType>
+                <label translate="true">Bank</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="BrainStation23\EmiManagement\Model\Source\BankOptions"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+
+        <field name="months" formElement="input" sortOrder="20">
+            <settings>
+                <dataType>int</dataType>
+                <label translate="true">Tenure Duration (Months)</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                    <rule name="validate-greater-than-zero" xsi:type="boolean">true</rule>
+                    <rule name="validate-digits" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+
+        <field name="fee_percentage" formElement="input" sortOrder="30">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Convenience Fee (%)</label>
+                <notice translate="true">Enter the fee as a percentage, e.g. 8 for 8%. Enter 0 for interest-free.</notice>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                    <rule name="validate-zero-or-greater" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+
+        <field name="status" formElement="select" sortOrder="40">
+            <settings>
+                <dataType>int</dataType>
+                <label translate="true">Status</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="BrainStation23\EmiManagement\Model\Source\Status"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+    </fieldset>
+</form>

@@ -1,0 +1,5 @@
+# This directory is a Syncthing folder marker.
+# Do not delete.
+
+folderID: pmxnx-tvota
+created: 2026-06-24T15:30:42+06:00

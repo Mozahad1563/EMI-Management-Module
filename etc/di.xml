@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Brain Station 23
+ *
+ * @category   BrainStation23
+ * @package    EmiManagement
+ * @author     Brain Station 23
+ * @copyright  Copyright (c) 2026 Brain Station 23
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Interface preferences -->
+    <preference for="BrainStation23\EmiManagement\Api\Data\BankInterface"
+                type="BrainStation23\EmiManagement\Model\Bank"/>
+    <preference for="BrainStation23\EmiManagement\Api\Data\PlanInterface"
+                type="BrainStation23\EmiManagement\Model\Plan"/>
+    <preference for="BrainStation23\EmiManagement\Api\BankRepositoryInterface"
+                type="BrainStation23\EmiManagement\Model\BankRepository"/>
+    <preference for="BrainStation23\EmiManagement\Api\PlanRepositoryInterface"
+                type="BrainStation23\EmiManagement\Model\PlanRepository"/>
+    <preference for="BrainStation23\EmiManagement\Api\EmiDataProviderInterface"
+                type="BrainStation23\EmiManagement\Model\EmiDataProvider"/>
+
+    <!-- Admin grid data source collections (virtual types) -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="emi_bank_listing_data_source" xsi:type="string">
+                    BrainStation23\EmiManagement\Model\ResourceModel\Bank\Grid\Collection
+                </item>
+                <item name="emi_plan_listing_data_source" xsi:type="string">
+                    BrainStation23\EmiManagement\Model\ResourceModel\Plan\Grid\Collection
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="BrainStation23\EmiManagement\Model\ResourceModel\Bank\Grid\Collection"
+                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">emi_bank</argument>
+            <argument name="resourceModel" xsi:type="string">
+                BrainStation23\EmiManagement\Model\ResourceModel\Bank
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="BrainStation23\EmiManagement\Model\ResourceModel\Plan\Grid\Collection"
+                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">emi_plan</argument>
+            <argument name="resourceModel" xsi:type="string">
+                BrainStation23\EmiManagement\Model\ResourceModel\Plan
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Bank logo image uploader -->
+    <virtualType name="BrainStation23\EmiManagement\BankLogoImageUploader"
+                 type="Magento\Catalog\Model\ImageUploader">
+        <arguments>
+            <argument name="baseTmpPath" xsi:type="string">emi/tmp/logos</argument>
+            <argument name="basePath" xsi:type="string">emi/logos</argument>
+            <argument name="allowedExtensions" xsi:type="array">
+                <item name="jpg" xsi:type="string">jpg</item>
+                <item name="jpeg" xsi:type="string">jpeg</item>
+                <item name="png" xsi:type="string">png</item>
+                <item name="gif" xsi:type="string">gif</item>
+                <item name="svg" xsi:type="string">svg</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="BrainStation23\EmiManagement\Controller\Adminhtml\Bank\Upload">
+        <arguments>
+            <argument name="imageUploader" xsi:type="object">
+                BrainStation23\EmiManagement\BankLogoImageUploader
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="BrainStation23\EmiManagement\Controller\Adminhtml\Bank\Save">
+        <arguments>
+            <argument name="imageUploader" xsi:type="object">
+                BrainStation23\EmiManagement\BankLogoImageUploader
+            </argument>
+        </arguments>
+    </type>
+</config>
