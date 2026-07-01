@@ -12,10 +12,10 @@
 
     <settings>
         <buttons>
-            <button name="back" class="Magento\Cms\Block\Adminhtml\Block\Edit\BackButton"/>
-            <button name="delete" class="Magento\Cms\Block\Adminhtml\Block\Edit\DeleteButton"/>
-            <button name="save" class="Magento\Cms\Block\Adminhtml\Block\Edit\SaveButton"/>
-            <button name="save_and_continue" class="Magento\Cms\Block\Adminhtml\Block\Edit\SaveAndContinueButton"/>
+            <button name="back" class="BrainStation23\EmiManagement\Block\Adminhtml\Bank\Edit\BackButton"/>
+            <button name="delete" class="BrainStation23\EmiManagement\Block\Adminhtml\Bank\Edit\DeleteButton"/>
+            <button name="save" class="BrainStation23\EmiManagement\Block\Adminhtml\Bank\Edit\SaveButton"/>
+            <button name="save_and_continue" class="BrainStation23\EmiManagement\Block\Adminhtml\Bank\Edit\SaveAndContinueButton"/>
         </buttons>
         <namespace>emi_bank_form</namespace>
         <dataScope>data</dataScope>
@@ -164,7 +164,6 @@
                 </field>
                 <actionDelete name="action_delete">
                     <settings>
-                        <contentType>actionDelete</contentType>
                         <label translate="true">Delete</label>
                     </settings>
                 </actionDelete>
