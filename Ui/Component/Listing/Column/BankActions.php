@@ -46,19 +46,20 @@ class BankActions extends Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
-                if (isset($item['entity_id'])) {
+                $id = $item['id'] ?? $item['entity_id'] ?? null;
+                if ($id) {
                     $item[$this->getData('name')] = [
                         'edit' => [
                             'href' => $this->urlBuilder->getUrl(
                                 'emi_management/bank/edit',
-                                ['id' => $item['entity_id']]
+                                ['id' => $id]
                             ),
                             'label' => __('Edit')
                         ],
                         'delete' => [
                             'href' => $this->urlBuilder->getUrl(
                                 'emi_management/bank/delete',
-                                ['id' => $item['entity_id']]
+                                ['id' => $id]
                             ),
                             'label' => __('Delete'),
                             'confirm' => [
