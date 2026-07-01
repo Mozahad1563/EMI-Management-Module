@@ -24,12 +24,5 @@
              parent="BrainStation23_EmiManagement::emi_management"
              action="emi_management/bank"
              resource="BrainStation23_EmiManagement::bank"/>
-        <add id="BrainStation23_EmiManagement::plan"
-             title="EMI Plans"
-             module="BrainStation23_EmiManagement"
-             sortOrder="20"
-             parent="BrainStation23_EmiManagement::emi_management"
-             action="emi_management/plan"
-             resource="BrainStation23_EmiManagement::plan"/>
     </menu>
 </config>

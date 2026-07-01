@@ -19,6 +19,7 @@ class DataProvider extends AbstractDataProvider
         CollectionFactory $collectionFactory,
         private readonly DataPersistorInterface $dataPersistor,
         private readonly StoreManagerInterface $storeManager,
+        private readonly \BrainStation23\EmiManagement\Model\ResourceModel\Plan\CollectionFactory $planCollectionFactory,
         array $meta = [],
         array $data = []
     ) {
@@ -49,6 +50,20 @@ class DataProvider extends AbstractDataProvider
                     ],
                 ];
             }
+
+            // Load associated plans/tenures
+            $plansCollection = $this->planCollectionFactory->create();
+            $plansCollection->addFieldToFilter('bank_id', $bank->getId());
+            $plans = [];
+            foreach ($plansCollection as $plan) {
+                $plans[] = [
+                    'id' => $plan->getId(),
+                    'months' => $plan->getMonths(),
+                    'fee_percentage' => $plan->getFeePercentage(),
+                    'status' => $plan->getStatus(),
+                ];
+            }
+            $data['tenure_plans'] = $plans;
 
             $this->loadedData[$bank->getId()] = $data;
         }
