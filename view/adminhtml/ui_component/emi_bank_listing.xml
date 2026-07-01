@@ -83,7 +83,7 @@
             </settings>
         </column>
 
-        <column name="logo" class="Magento\Ui\Component\Listing\Columns\Thumbnail" component="Magento_Ui/js/grid/columns/thumbnail" sortOrder="30">
+        <column name="logo" class="BrainStation23\EmiManagement\Ui\Component\Listing\Column\Thumbnail" component="Magento_Ui/js/grid/columns/thumbnail" sortOrder="30">
             <settings>
                 <altField>name</altField>
                 <hasPreview>true</hasPreview>
