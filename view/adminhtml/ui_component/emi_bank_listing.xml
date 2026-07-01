@@ -109,7 +109,7 @@
             </settings>
         </column>
 
-        <actionsColumn name="actions" class="Magento\Ui\Component\Listing\Columns\Actions" sortOrder="100">
+        <actionsColumn name="actions" class="BrainStation23\EmiManagement\Ui\Component\Listing\Column\BankActions" sortOrder="100">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="editUrlPath" xsi:type="string">emi_management/bank/edit</item>
